@@ -26,11 +26,11 @@ if (isset($_SESSION["ShopperName"])) {
 }
 ?>
 
-     Display a navbar which is visible before or after collapsing -->
-<nav class="navbar navbar-expand-md navbar-dark bg-custom">
+    <!-- Display a navbar which is visible before or after collapsing -->
+    <nav class="navbar navbar-expand-md navbar-custom bg-custom">
     <div class="container-fluid">
         <!--Dynamic text display-->
-        <span class="navbar-text ms-md-2" style="color:#F7BE81; max-width: 80%;">
+        <span class="navbar-text ms-md-2" style="color:#B8860B; max-width: 80%;">
             <?php echo $content1; ?>
         </span>
         <!--Toggler/Collapsible button-->
@@ -42,24 +42,23 @@ if (isset($_SESSION["ShopperName"])) {
 
 <!--
      Define a collapsible navbar -->
-<nav class="navbar navbar-expand-md navbar-dark bg-custom">
+<nav class="navbar navbar-expand-sm bg-custom navbar-custom">
     <div class="container-fluid">
         <!--collapsible part of navbar-->
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
-            <!--left-justified menu items-->
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="category.php">Product Categories</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="search.php">Product Search</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="shoppingCart.php">Shopping Cart</a>
-                </li>
-            </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="category.php">Product Category</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="search.php">Product Search</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="shoppingcart.php">Shopping Cart</a>
+        </li>
+      </ul>
             <!--right-justified menu items-->
-            <ul class="navbar-nav ms-auto">
+        <ul class="navbar-nav ms-auto">
                 <?php echo $content2; ?>
             </ul>
         </div>
