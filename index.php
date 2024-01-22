@@ -1,4 +1,5 @@
 <?php 
+use Vtiful\Kernel\Format;
 // Detect the current session
 session_start();
 // Include the Page Layout header
@@ -19,23 +20,22 @@ include("header.php");
 <?php
 echo"<div class='container-mt-3'>";
 include_once("mysql_conn.php");
-//retrieve products that are on offer
+//retrieve products that are on offer and filter those that are currently active in this current date
 $qry = "SELECT * FROM product WHERE Offered = 1 AND NOW() BETWEEN OfferStartDate AND OfferEndDate;";
 $result = $conn ->query($qry); //execute sql and get the result
 echo"<div class='d-flex'>";
 while ($row = $result -> fetch_array()){
 $productName = urlencode($row["ProductTitle"]);
-$productDetails = "productDetails.php?cid=$row[ProductID]&ProductTitle=$productName";
+$productDetails = "productDetails.php?pid=$row[ProductID]&ProductTitle=$productName";
 
-
-  echo"<div class='card  h-100' style='width:300px'>";
+echo"<div class='card  h-100' style='width:300px'>";
     echo"<img class='card-img-top' src='./Images/Products/$row[ProductImage]' alt='Card image' style='width:100%''>";
     echo"<div class='card-body  d-flex flex-column'>";
      echo"<h5 class='card-title'>$row[ProductTitle]</h4>";
      
      //calculate the percentage discount and round it to nearest whole number
-     $originalPrice = $row["Price"];
-     $discountedPrice = $row["OfferedPrice"];
+     $originalPrice = number_format($row["Price"],2);
+     $discountedPrice = number_format($row["OfferedPrice"],2);
      $discountPercentage = round((($originalPrice - $discountedPrice)/$originalPrice) * 100);
       //show the discounted price of the product
       if ($row['Offered'] && $row['OfferedPrice'] < $row['Price']) {

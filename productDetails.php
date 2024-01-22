@@ -19,6 +19,12 @@ $stmt->close();
 
 // Display Product information. Starting ....
 while ($row = $result->fetch_array()) {
+    //format the price to 2 dp
+    $formattedPrice = number_format($row["Price"], 2);
+    //format the discount price of product on offer to 2dp
+    $formattedDiscountedPrice = number_format($row["OfferedPrice"],2);
+    //calculate the discount percentage
+    $discountPercentage = round((($formattedPrice - $formattedDiscountedPrice)/$formattedPrice) * 100);
     // Display page header
     // product's name is read from the "ProductTitle" column of "product" table
     echo "<div class='row'>";
@@ -52,11 +58,26 @@ while ($row = $result->fetch_array()) {
     echo "<div class='col-sm-4 text-center' style='padding: 10px;'>";
     echo "<img src='$img' class='img-fluid' alt='Product Image'>";
     
-    // Display the product's price 
-    $formattedPrice = number_format($row["Price"], 2);
-    echo "<p><strong>Price:</strong> <span style='font-weight: bold; color: red;'>S$ $formattedPrice</span></p>";
-    
-    // Form for adding the product to the shopping cart
+    //if product is on offer, show the original and discounted price
+    $currentDate = date('Y-m-d');
+    if ($row['Offered'] && $row['OfferStartDate'] <= $currentDate && $row['OfferEndDate'] >= $currentDate){
+        echo "<p><strong></strong><s>S$ $formattedPrice</s></p>";
+        echo "<p><strong>Price:</strong> <span style='font-weight: bold; color: red;'>S$ $formattedDiscountedPrice</span></p>";
+             //display the discount percentage
+             echo" <p style='color:green;'>$discountPercentage% off</p>";
+    }
+    else{
+        // Display the product's price 
+        echo "<p><strong>Price:</strong> <span style='font-weight: bold; color: red;'>S$ $formattedPrice</span></p>";
+    } 
+    //if product quantity is out of stock
+    if($row["Quantity"] <= 0){
+        echo"<div class='alert alert-danger' role='alert'>";
+        echo"Out of Stock";
+        echo"</div>";
+    } 
+    else{
+          // Form for adding the product to the shopping cart
     echo "<form action='cartFunctions.php' method='post'>";
     echo "<input type='hidden' name='action' value='add'/>";
     echo "<input type='hidden' name='product_id' value='$pid'/>";
@@ -69,6 +90,7 @@ while ($row = $result->fetch_array()) {
     
     echo "</div>";// end of right column
     echo "</div>";// end of row
+    } 
 }
 
 $conn->close(); // Close database connection

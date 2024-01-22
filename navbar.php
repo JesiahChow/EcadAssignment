@@ -51,10 +51,10 @@ if (isset($_SESSION["ShopperName"])) {
           <a class="nav-link" href="category.php">Product Category</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="search.php">Product Search</a>
+          <a class="nav-link" href="shoppingcart.php">Shopping Cart</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="shoppingcart.php">Shopping Cart</a>
+          <a class="nav-link" href="search.php">Search</a>
         </li>
       </ul>
             <!--right-justified menu items-->
