@@ -17,25 +17,32 @@ include("header.php");
 <h2 style="text-align: center; color:red">Products on Offer</h2></div>
 
 <?php
-echo"<div class='container mt-3'>";
+echo"<div class='container-mt-3'>";
 include_once("mysql_conn.php");
 //retrieve products that are on offer
 $qry = "SELECT * FROM product WHERE Offered = 1 AND NOW() BETWEEN OfferStartDate AND OfferEndDate;";
 $result = $conn ->query($qry); //execute sql and get the result
-echo"<div class='d-flex p-3 bg-custom text-white'>";
+echo"<div class='d-flex'>";
 while ($row = $result -> fetch_array()){
 $productName = urlencode($row["ProductTitle"]);
 $productDetails = "productDetails.php?cid=$row[ProductID]&ProductTitle=$productName";
 
-echo "<div class='col'>";
-  echo"<div class='card  h-100' style='width:400px'>";
+
+  echo"<div class='card  h-100' style='width:300px'>";
     echo"<img class='card-img-top' src='./Images/Products/$row[ProductImage]' alt='Card image' style='width:100%''>";
     echo"<div class='card-body  d-flex flex-column'>";
-     echo"<h4 class='card-title'>$row[ProductTitle]</h4>";
+     echo"<h5 class='card-title'>$row[ProductTitle]</h4>";
+     
+     //calculate the percentage discount and round it to nearest whole number
+     $originalPrice = $row["Price"];
+     $discountedPrice = $row["OfferedPrice"];
+     $discountPercentage = round((($originalPrice - $discountedPrice)/$originalPrice) * 100);
       //show the discounted price of the product
       if ($row['Offered'] && $row['OfferedPrice'] < $row['Price']) {
-          echo "<p class='card-text' style='text-decoration: line-through;'>Original Price: $$row[Price]</p>";
-          echo "<p class='card-text'>Discounted Price: $$row[OfferedPrice]</p>";
+          echo "<p class='card-text' style='text-decoration: line-through;'>$$row[Price]</p>";
+          echo "<p class='card-text' style='color:red';><b>$$row[OfferedPrice]</b></p>";
+           // Display the discount percentage
+        echo "<p class='card-text' style='color:green;'>$discountPercentage% off</p>";
       } else {
           echo "<p class='card-text'>Price: $$row[Price]</p>";
       }
@@ -44,8 +51,8 @@ echo "<div class='col'>";
       echo"<br>";
     echo"</div>";
   echo"</div>";
-  echo"</div>";
 }
+$conn->close();
 echo"</div>";
 echo"</div>";
   ?>
