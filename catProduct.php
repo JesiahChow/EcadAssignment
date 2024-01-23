@@ -49,8 +49,8 @@ include("header.php"); // Include the Page Layout header
                 echo "<img src='$img' class='card-img-top' alt='Product Image'>";
                 echo "<div class='card-body'>";
                 echo "<h5 class='card-title'><a href='$product'>$row[ProductTitle]</a></h5>";
-                echo "<p class='card-text'><s>S$ $formattedPrice</s></p>";
-                echo "<p class='card-text'><span style='font-weight:bold;color:red;'>S$ $formattedDiscountedPrice</span></p>";
+                echo "<p class='card-text'><s>Price:S$ $formattedPrice</s></p>";
+                echo "<p class='card-text'><span style='font-weight:bold;color:red;font-size:20px;'>Now S$ $formattedDiscountedPrice</span></p>";
                 //display the discount percentage
                 echo" <p class='card-text' style='color:green;'>$discountPercentage% off</p>";
                 echo "</div>";

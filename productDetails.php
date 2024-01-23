@@ -61,8 +61,8 @@ while ($row = $result->fetch_array()) {
     //if product is on offer, show the original and discounted price
     $currentDate = date('Y-m-d');
     if ($row['Offered'] && $row['OfferStartDate'] <= $currentDate && $row['OfferEndDate'] >= $currentDate){
-        echo "<p><strong></strong><s>S$ $formattedPrice</s></p>";
-        echo "<p><strong>Price:</strong> <span style='font-weight: bold; color: red;'>S$ $formattedDiscountedPrice</span></p>";
+        echo "<p><s>Price:S$ $formattedPrice</s></p>";
+        echo "<p><span style='font-weight: bold; color: red; font-size:20px;'>Now S$ $formattedDiscountedPrice</span></p>";
              //display the discount percentage
              echo" <p style='color:green;'>$discountPercentage% off</p>";
     }

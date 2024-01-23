@@ -39,8 +39,8 @@ echo"<div class='card  h-100' style='width:300px'>";
      $discountPercentage = round((($originalPrice - $discountedPrice)/$originalPrice) * 100);
       //show the discounted price of the product
       if ($row['Offered'] && $row['OfferedPrice'] < $row['Price']) {
-          echo "<p class='card-text' style='text-decoration: line-through;'>$$row[Price]</p>";
-          echo "<p class='card-text' style='color:red';><b>$$row[OfferedPrice]</b></p>";
+          echo "<p class='card-text' style='text-decoration: line-through;'>Price:S$$originalPrice</p>";
+          echo "<p class='card-text' style='color:red;font-size:20px;'><b>Now S$$discountedPrice</b></p>";
            // Display the discount percentage
         echo "<p class='card-text' style='color:green;'>$discountPercentage% off</p>";
       } else {
