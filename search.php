@@ -11,6 +11,7 @@ include("header.php"); // Include the Page Layout header
             <span class="page-title">Product Search</span>
         </div>
     </div> <!-- End of 1st row -->
+    
     <div class="mb-3 row"> <!-- 2nd row -->
         <label for="keywords" 
                class="col-sm-3 col-form-label">Product Title:</label>
@@ -29,8 +30,8 @@ include_once("mysql_conn.php");
 // The non-empty search keyword is sent to server
 if (isset($_GET["keywords"]) && trim($_GET['keywords']) != "") {
     $SearchText = $_GET['keywords'];
-    // To Do (DIY): Retrieve list of product records with "ProductTitle" 
-	// contains the keyword entered by shopper, and display them in a table.
+    // Retrieve list of product records with "ProductTitle" 
+	// contains the keywords, price range and occasion entered by shopper, and display them in a table
     $qry = "SELECT ProductID, ProductTitle,ProductDesc,Price FROM product WHERE ProductTitle LIKE '%$SearchText%' or ProductDesc LIKE '%$SearchText%' ORDER BY ProductTitle";
     $result = $conn ->query($qry);
 
