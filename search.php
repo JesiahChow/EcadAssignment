@@ -20,21 +20,22 @@ include("header.php"); // Include the Page Layout header
         </div>
       <!-- Dropdown for selecting category -->
         <div class="mb-3 row">
-            <label for="category" class="col-sm-3 col-form-label text-sm-end">Category:</label>
+            <label for="category" class="col-sm-3 col-form-label text-sm-end">Occasion:</label>
             <div class="col-sm-9">
-                <select class="form-control" name="category" id="category">
-                    <option value="">All Categories</option>
+                <select class="form-control" name="occasion" id="occasion">
+                    <option value="">None</option>
                     <?php
                     include_once("mysql_conn.php");  // Include the database connection file
 
                     // Fetch categories from the database
-                    $categoryQuery = "SELECT * FROM Category";
-                    $categoryResult = $conn->query($categoryQuery);
+                    $occasion = "SELECT Distinct p.SpecVal from productspec p INNER JOIN specification s
+                    ON p.SpecID = s.SpecID Where s.SpecID = 1";
+                    $result = $conn->query($occasion);
 
-                    if ($categoryResult->num_rows > 0) {
-                        while ($categoryRow = $categoryResult->fetch_assoc()) {
-                            $categoryName = $categoryRow['CatName'];
-                            echo "<option value=\"$categoryName\">$categoryName</option>";
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            $occasionName = $row['SpecVal'];
+                            echo "<option value=\"$occasionName\">$occasionName</option>";
                         }
                     }
                    ?>
@@ -79,35 +80,41 @@ include("header.php"); // Include the Page Layout header
     // The non-empty search keyword is sent to the server
     if (isset($_GET["keywords"]) && trim($_GET['keywords']) != "") {
         $SearchText = $_GET['keywords'];
-        $minPrice = isset($_GET['minPrice']);
-        $maxPrice = isset($_GET['maxPrice']);
+        $minPrice = isset($_GET['minPrice']) ? $_GET['minPrice'] : 0;
+        $maxPrice = isset($_GET['maxPrice']) ? $_GET['maxPrice'] : PHP_INT_MAX;
+        
 
         //check if checkbox is checked
         $discountChecked = isset($_GET['discount'])? $_GET['discount']:0;
         // Retrieve category filter value
-        $categoryFilter = isset($_GET['category']) ? $_GET['category'] : '';
+        $occasionList = isset($_GET['occasion']) ? $_GET['occasion'] : '';
 
 
         // Retrieve list of product records with "ProductTitle" 
         // contains the keywords, price range, and occasion entered by the shopper, and display them in a table
-        $qry = "SELECT * FROM product p JOIN catproduct cp ON p.ProductID = cp.ProductID
+        $qry = "SELECT DISTINCT p.* FROM product p 
+        INNER JOIN productspec ps ON p.ProductID = ps.ProductID
+        INNER JOIN specification s ON ps.SpecID = s.SpecID
         WHERE (p.ProductTitle LIKE '%$SearchText%' OR p.ProductDesc LIKE '%$SearchText%')";
 
         // Add conditions based on user input
         if ($minPrice > 0) {
-            $qry .= " AND Price >= $minPrice";
+            //$qry .= " AND Price >=?";
+            //the query is to let the search function check the offered price of the product that is on offer or the original price 
+            //if the product is not on offer.
+            $qry .= " AND (Offered = 1 AND NOW() BETWEEN OfferStartDate AND OfferEndDate AND OfferedPrice >= ? OR Price >= ?)";;
         }
 
         if ($maxPrice < PHP_INT_MAX) {
-            $qry .= " AND Price <= $maxPrice";
+            //$qry .=" AND Price <=?";
+            //the query is to let the search function check the offered price of the product that is on offer or the original price 
+            //if the product is not on offer.
+            $qry .= " AND (Offered = 1 AND NOW() BETWEEN OfferStartDate AND OfferEndDate AND OfferedPrice <= ? OR Price <= ?)";
         }
         // Add condition for category filter
-        if ($categoryFilter !== '') {
-           // Subquery to retrieve CategoryID based on CatName
-            $categorySubquery = "SELECT CategoryID FROM Category WHERE CatName = '$categoryFilter'";
-            
-            // Main query to filter by CategoryID
-            $qry .= " AND cp.CategoryID IN ($categorySubquery)";
+        if ($occasionList !== '') {
+           // retrieve the products based on chosen occasion
+           $qry .=" AND s.SpecID = 1 AND ps.SpecVal = '$occasionList'";
         }
         // Condition for showing only discounted products
         if ($discountChecked == 1) {
@@ -118,7 +125,12 @@ include("header.php"); // Include the Page Layout header
 
         // Use prepared statement to prevent SQL injection
         $stmt = $conn->prepare($qry);
-        // Execute the statement
+        // Bind parameters if user enters price range
+        if ($minPrice > 0 && $maxPrice < PHP_INT_MAX) {
+            $stmt->bind_param("dddd", $minPrice, $minPrice, $maxPrice, $maxPrice);
+            //$stmt->bind_param("dd", $minPrice, $maxPrice);
+        }
+         // Execute the statement
         $stmt->execute();
         // Get the result
         $result = $stmt->get_result();

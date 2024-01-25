@@ -23,7 +23,7 @@ include_once("mysql_conn.php");
 //retrieve products that are on offer and filter those that are currently active in this current date
 $qry = "SELECT * FROM product WHERE Offered = 1 AND NOW() BETWEEN OfferStartDate AND OfferEndDate;";
 $result = $conn ->query($qry); //execute sql and get the result
-echo"<div class='d-flex'>";
+echo"<div class='d-flex flex-wrap'>";
 while ($row = $result -> fetch_array()){
 $productName = urlencode($row["ProductTitle"]);
 $productDetails = "productDetails.php?pid=$row[ProductID]&ProductTitle=$productName";
