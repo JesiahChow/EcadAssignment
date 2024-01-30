@@ -19,8 +19,10 @@
          <!--1st row-->
          <div class="row">
             <div class="col-sm-12">
-                <!--<a href="index.php">
-                    <img src="Images/logo.jpg" alt="Logo" class="img-fluid" style="width:100%" /></a>-->
+                <a href="index.php">
+                    <img src="Images/logo.png" alt="Logo" class="img-fluid" style="width:200px; height: 200px;">
+                </a>
+            </div>
         </div>
         <!--2nd row -->
         <div class="row">

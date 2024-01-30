@@ -27,10 +27,13 @@ if (isset($_SESSION["ShopperName"])) {
 ?>
 
     <!-- Display a navbar which is visible before or after collapsing -->
-    <nav class="navbar navbar-expand-md navbar-custom bg-custom">
+    <nav class="navbar navbar-expand-md navbar-custom bg-custom"> 
     <div class="container-fluid">
         <!--Dynamic text display-->
         <span class="navbar-text ms-md-2" style="color:#B8860B; max-width: 80%;">
+       <!-- <a class="navbar-brand" href="index.php">
+            <img src="Images/logo.png" alt="Logo" class="img-fluid" style="height: 100px;">
+        </a>-->
             <?php echo $content1; ?>
         </span>
         <!--Toggler/Collapsible button-->

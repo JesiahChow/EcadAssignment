@@ -7,7 +7,7 @@ include("header.php");
 ?>
 <!--flower image source-->
 <!--https://unsplash.com/photos/pink-roses-illustration-_IpKsTK9gcE-->
-<h2 style="text-align: center;">Your Number 1 Flower Shop</h2>
+<h2 style="text-align: center;">Your Number 1 Gift Shop</h2>
 <img src="Images/flower.jpg" class="img-fluid" 
      style="display:block; margin:auto;"/>
 
