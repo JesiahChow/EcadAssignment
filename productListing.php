@@ -22,7 +22,7 @@ include("header.php"); // Include the Page Layout header
     $cid = $_GET["cid"]; // Read category ID from the query string
     // Form SQL to retrieve a list of products associated with the category ID
     $qry = "SELECT p.ProductID, p.ProductTitle, p.ProductImage, p.Price, p.Quantity, p.OfferedPrice, p.Offered, p.OfferStartDate, p.OfferEndDate
-            FROM CatProduct cp INNER JOIN product p ON cp.ProductID=p.ProductID WHERE cp.CategoryID=?";
+            FROM CatProduct cp INNER JOIN product p ON cp.ProductID=p.ProductID WHERE cp.CategoryID=? order by p.ProductTitle";
     $stmt = $conn->prepare($qry);
     $stmt->bind_param("i", $cid); // "i" - integer
     $stmt->execute();
@@ -41,7 +41,9 @@ include("header.php"); // Include the Page Layout header
             //calculate the discount percentage
             $discountPercentage = round((($formattedPrice - $formattedDiscountedPrice)/$formattedPrice) * 100);
             // Check if the product is on offer during this time
-            $currentDate = date('Y-m-d');
+            $todaysDate = new DateTime('now');
+            $currentDate = $todaysDate->format('Y-m-d'); 
+
             if ($row['Offered'] && $row['OfferStartDate'] <= $currentDate && $row['OfferEndDate'] >= $currentDate) {
                 // Product is on offer, display original and discounted prices
                 echo "<div class='col-md-4 mb-4'>";

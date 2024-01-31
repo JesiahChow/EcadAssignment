@@ -121,7 +121,7 @@ include("header.php"); // Include the Page Layout header
             $qry .= " AND Offered = 1 AND NOW() BETWEEN OfferStartDate AND OfferEndDate";
         }
 
-        $qry .= " ORDER BY ProductTitle";
+        $qry .= "  ORDER BY ProductTitle";
 
         // Use prepared statement to prevent SQL injection
         $stmt = $conn->prepare($qry);

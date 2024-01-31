@@ -3,8 +3,7 @@
 //Display guest welcome message, Login and Registration links
 //when shopper has yet to login,
 $content1 = "Welcome Guest<br />";
-$content2 = "<li class='nav-item'>
-		     <a class='nav-link' href='register.php'>Sign Up</a></li>
+$content2 = "
 			 <li class='nav-item'>
 		     <a class='nav-link' href='login.php'>Login</a></li>";
 if (isset($_SESSION["ShopperName"])) {
@@ -13,8 +12,7 @@ if (isset($_SESSION["ShopperName"])) {
     //Display a greeting message, Change Password and logout links 
     //after shopper has logged in.
     $content1 = "Welcome <b>$_SESSION[ShopperName]</b>";
-    $content2 = "<li class='nav-item'>
-                <a class='nav-link'href='changePassword.php'>Change Password</a></li>
+    $content2 = "
                 <li class='nav-item'>
                 <a class='nav-link' href='logout.php'>Logout</a></li>";
 

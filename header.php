@@ -20,7 +20,7 @@
          <div class="row">
             <div class="col-sm-12">
                 <a href="index.php">
-                    <img src="Images/logo.png" alt="Logo" class="img-fluid" style="width:200px; height: 200px;">
+                    <img src="Images/logo.png" alt="Logo" class="img-fluid" style="width:150px; height: 150px;">
                 </a>
             </div>
         </div>
