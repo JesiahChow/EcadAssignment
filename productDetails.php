@@ -61,7 +61,8 @@ while ($row = $result->fetch_array()) {
     //if product is on offer, show the original and discounted price
     $currentDate = date('Y-m-d');
     if ($row['Offered'] && $row['OfferStartDate'] <= $currentDate && $row['OfferEndDate'] >= $currentDate){
-        echo "<p><s>Price:S$ $formattedPrice</s></p>";
+        echo "<p><s>Price: <span class='text-muted'>S$ $formattedPrice</span></s></p>";
+        echo "<p><span class='badge bg-danger'>On Offer</span></p>";
         echo "<p><span style='font-weight: bold; color: red; font-size:20px;'>Now S$ $formattedDiscountedPrice</span></p>";
              //display the discount percentage
              echo" <p style='color:green;'>$discountPercentage% off</p>";
@@ -70,14 +71,27 @@ while ($row = $result->fetch_array()) {
         // Display the product's price 
         echo "<p><strong>Price:</strong> <span style='font-weight: bold; color: red;'>S$ $formattedPrice</span></p>";
     } 
-    //if product quantity is out of stock
+    //if product quantity is out of stock 
     if($row["Quantity"] <= 0){
-        echo"<div class='alert alert-danger' role='alert'>";
-        echo"Out of Stock";
-        echo"</div>";
+        echo "<form action='cartFunctions.php' method='post'>";
+        echo "<input type='hidden' name='action' value='add'/>";
+        echo "<input type='hidden' name='product_id' value='$pid'/>";
+        echo "<div class='mb-3'>";
+        echo "<label for='quantity' class='form-label'>Quantity:</label>";
+        //The quantity input will be disabled
+        echo "<input type='number' name='quantity' class='form-control' value='1' min='1' max='10' disabled/>";
+        echo "</div>";
+        //The "Add to Cart" button will be disabled
+        echo "<button type='submit' class='btn btn-primary' disabled>Add to Cart</button>";
+        echo"<p style='color:red';><b>Product is out of stock!</b></p>";
+        echo "</form>";
+        
+        echo "</div>";// end of right column
+        echo "</div>";// end of row
     } 
     else{
-          // Form for adding the product to the shopping cart
+    //if product has stock
+    // Form for adding the product to the shopping cart
     echo "<form action='cartFunctions.php' method='post'>";
     echo "<input type='hidden' name='action' value='add'/>";
     echo "<input type='hidden' name='product_id' value='$pid'/>";

@@ -13,17 +13,17 @@ include("header.php");
 
 </hr>
 
-<!--products on promotion-->
+<!--products on offer-->
 <div class="product-container">
 <h2 style="text-align: center; color:red">Products on Offer</h2></div>
-
+ 
 <?php
-echo"<div class='container mt-3'>";
+echo"<div class='container text-center'>";
 include_once("mysql_conn.php");
 //retrieve products that are on offer and filter those that are currently active in this current date
 $qry = "SELECT * FROM product WHERE Offered = 1 AND NOW() BETWEEN OfferStartDate AND OfferEndDate;";
 $result = $conn ->query($qry); //execute sql and get the result
-echo"<div class='d-flex justify-content center flex-wrap'>";
+echo"<div class='row justify-content-center'>";
 while ($row = $result -> fetch_array()){
 $productName = urlencode($row["ProductTitle"]);
 $productDetails = "productDetails.php?pid=$row[ProductID]&ProductTitle=$productName";
@@ -39,11 +39,14 @@ echo"<div class='card' style='width:300px'>";
      $discountPercentage = round((($originalPrice - $discountedPrice)/$originalPrice) * 100);
       //show the discounted price of the product
       if ($row['Offered'] && $row['OfferedPrice'] < $row['Price']) {
+        echo "<p><span class='badge bg-danger'>On Offer</span></p>";
           echo "<p class='card-text' style='text-decoration: line-through;'>Price:S$$originalPrice</p>";
           echo "<p class='card-text' style='color:red;font-size:20px;'><b>Now S$$discountedPrice</b></p>";
            // Display the discount percentage
         echo "<p class='card-text' style='color:green;'>$discountPercentage% off</p>";
-      } else {
+      }
+      //if product is not on offer 
+      else {
           echo "<p class='card-text'>Price: $$row[Price]</p>";
       }
   
