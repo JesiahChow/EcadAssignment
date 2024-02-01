@@ -18,7 +18,7 @@ include("header.php"); // Include the Page Layout header
     // Include the PHP file that establishes the database connection handle: $conn
     include_once("mysql_conn.php");
 
-    // To Do: Starting ....
+
     $cid = $_GET["cid"]; // Read category ID from the query string
     // Form SQL to retrieve a list of products associated with the category ID
     $qry = "SELECT p.ProductID, p.ProductTitle, p.ProductImage, p.Price, p.Quantity, p.OfferedPrice, p.Offered, p.OfferStartDate, p.OfferEndDate
@@ -43,23 +43,23 @@ include("header.php"); // Include the Page Layout header
             // Check if the product is on offer during this time
             $todaysDate = new DateTime('now');
             $currentDate = $todaysDate->format('Y-m-d'); 
-
+            // If product is on offer, display original and discounted prices
             if ($row['Offered'] && $row['OfferStartDate'] <= $currentDate && $row['OfferEndDate'] >= $currentDate) {
-                // Product is on offer, display original and discounted prices
                 echo "<div class='col-md-4 mb-4'>";
                 echo "<div class='card h-100'>";
                 echo "<img src='$img' class='card-img-top' alt='Product Image'>";
                 echo "<div class='card-body'>";
                 echo "<h5 class='card-title'><a href='$product'>$row[ProductTitle]</a></h5>";
+                echo "<p><span class='badge bg-danger'>On Offer</span></p>";
                 echo "<p class='card-text'><s>Price:S$ $formattedPrice</s></p>";
                 echo "<p class='card-text'><span style='font-weight:bold;color:red;font-size:20px;'>Now S$ $formattedDiscountedPrice</span></p>";
-                //display the discount percentage
+                //display the discount percentage off the original price
                 echo" <p class='card-text' style='color:green;'>$discountPercentage% off</p>";
                 echo "</div>";
                 echo "</div>";
                 echo "</div>";
             } else {
-                // Product is not on offer, display the regular price
+                // Product is not on offer, display the original price
                 echo "<div class='col-md-4 mb-4'>";
                 echo "<div class='card h-100'>";
                 echo "<img src='$img' class='card-img-top' alt='Product Image'>";
@@ -71,8 +71,6 @@ include("header.php"); // Include the Page Layout header
                 echo "</div>";
             }
         }
-        // To Do: Ending ....
-
         $conn->close(); // Close the database connection
         ?>
     </div>

@@ -7,7 +7,7 @@ include("header.php");
 // Reading inputs entered in previous page
 $email = $_POST["email"];
 $pwd = $_POST["password"];
-// To Do 1 (Practical 2): Validate login credentials with database
+//Validate login credentials with database
 include_once("mysql_conn.php");
 //sql query to select email,name and password
 $sql = "SELECT ShopperID,Email,Password,Name FROM Shopper WHERE Email ='$email'  ";
@@ -18,12 +18,9 @@ if ($result->num_rows > 0) {
     //if record is found and password is matched
     if ($email == $row["Email"] && $pwd == $row["Password"]) {
         //if record is found and password is matched
-
         $_SESSION["ShopperID"] = $row["ShopperID"];
         $_SESSION["ShopperName"] = $row["Name"];
-
         //for shopping cart
-
         $shopperID = $_SESSION["ShopperID"];
         $qry = "SELECT ShopCartID FROM ShopCart WHERE ShopperID=? AND OrderPlaced=0";
         $stmt = $conn->prepare($qry);
@@ -56,7 +53,8 @@ if ($result->num_rows > 0) {
 
     //if email or password does not match
     elseif ($email != $row["Email"] || $pwd != $row["Password"]) {
-        echo "<h3 style='color:red'>Invalid Login Credentials</h3>";
+        echo "<h3 style='color:red'>Invalid Login Credentials.</h3>";
+        echo"<p>Please click <a href = 'login.php'>here</a> to login again</p>";
         return false;
     }
 }

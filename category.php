@@ -16,8 +16,8 @@ include("header.php"); // Include the Page Layout header
 // Include the PHP file that establishes database connection handle: $conn
 include_once("mysql_conn.php");
 
-// To Do:  Starting ....
-$qry = "SELECT * FROM Category order by catName"; //form sql to select all categories
+// retrieve all categories
+$qry = "SELECT * FROM Category order by catName";
 $result = $conn ->query($qry); //execute sql and get the result
 
 while ($row = $result -> fetch_array()){
@@ -39,7 +39,7 @@ echo "</div>";
 
 echo "</div>";//end of row
 }
-// To Do:  Ending ....
+
 
 $conn->close(); // Close database connnection
 echo "</div>"; // End of container
