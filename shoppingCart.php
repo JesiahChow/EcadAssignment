@@ -94,9 +94,15 @@ if (isset($_SESSION["Cart"])) {
         echo "<p style='text-align:right; font-size:20px'>
                 Subtotal = S$" . number_format($subTotal, 2);
         $_SESSION["SubTotal"] = round($subTotal, 2);
-
+        include("shipinfo.php"); // Include the Page Layout footer
+        /*
         // Add PayPal Checkout button on the shopping cart page
-
+        echo "<form method='post' action=' checkoutProcess.php'>"; 
+		echo "<input type='image' style='float:right;'
+						src='https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif'>";
+		echo "</form>";	
+        */
+        echo "</p>";
     } else {
         echo "<h3 style='text-align:center; color:red;'>Empty shopping cart!</h3>";
     }
