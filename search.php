@@ -60,7 +60,7 @@ include("header.php"); // Include the Page Layout header
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="1" name="discount" id="flexCheckDefault">
                     <label class="form-check-label" for="flexCheckDefault">
-                        Discount
+                        On Offer
                     </label>
                 </div>
             </div>
@@ -97,6 +97,12 @@ include("header.php"); // Include the Page Layout header
         INNER JOIN specification s ON ps.SpecID = s.SpecID
         WHERE (p.ProductTitle LIKE '%$SearchText%' OR p.ProductDesc LIKE '%$SearchText%')";
 
+
+            // Add condition for category filter
+        if ($occasionList !== '') {
+           // retrieve the products based on chosen occasion
+           $qry .=" AND s.SpecID = 1 AND ps.SpecVal = '$occasionList'";
+        }
         // Add conditions based on user input
         if ($minPrice > 0) {
             //$qry .= " AND Price >=?";
@@ -110,11 +116,6 @@ include("header.php"); // Include the Page Layout header
             //the query is to let the search function check the offered price of the product that is on offer or the original price 
             //if the product is not on offer.
             $qry .= " AND (Offered = 1 AND NOW() BETWEEN OfferStartDate AND OfferEndDate AND OfferedPrice <= ? OR Price <= ?)";
-        }
-        // Add condition for category filter
-        if ($occasionList !== '') {
-           // retrieve the products based on chosen occasion
-           $qry .=" AND s.SpecID = 1 AND ps.SpecVal = '$occasionList'";
         }
         // Condition for showing only discounted products
         if ($discountChecked == 1) {
