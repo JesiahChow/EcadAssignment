@@ -14,8 +14,10 @@ echo "<div id='myShopCart' style='margin:auto'>"; // Start a container
 if (isset($_SESSION["Cart"])) {
     include_once("mysql_conn.php");
     // Retrieve from database and display shopping cart in a table
-    $qry = "SELECT *, (Price*Quantity) as Total
-            FROM ShopCartItem WHERE ShopCartID=?";
+    $qry = "SELECT ShopCartItem.*, Product.Offered,OfferedPrice,OfferStartDate,OfferEndDate
+            FROM ShopCartItem
+            INNER JOIN Product ON ShopCartItem.ProductID = Product.ProductID
+            WHERE ShopCartID=?";
     $stmt = $conn->prepare($qry);
     $stmt->bind_param("i", $_SESSION["Cart"]);
     $stmt->execute();
@@ -23,7 +25,6 @@ if (isset($_SESSION["Cart"])) {
     $stmt->close();
 
     if ($result->num_rows > 0) {
-
         // Format and display the page header and header row of shopping cart page
         echo "<p class='page-title' style='text-align:center'>Shopping Cart</p>";
         echo "<div class='table-responsive' >"; // Bootstrap responsive table
@@ -32,6 +33,7 @@ if (isset($_SESSION["Cart"])) {
         echo "<tr'>";
         echo "<th width='250px'>Item</th>";
         echo "<th width='90px'>Price (S$)</th>";
+        echo "<th width='180px'>Discounted Price (S$)</th>";
         echo "<th width='60px'>Quantity</th>";
         echo "<th width='120px'>Total (S$)</th>";
         echo "<th>&nbsp;</th>";
@@ -49,6 +51,16 @@ if (isset($_SESSION["Cart"])) {
             echo "Product ID: $row[ProductID]</td>";
             $formattedPrice = number_format($row["Price"], 2);
             echo "<td>$formattedPrice</td>";
+            if ($row["Offered"] == 1) {
+                if ($row["OfferStartDate"] <= date("Y-m-d") and date("Y-m-d") <= $row["OfferEndDate"]) {
+                    $formattedOfferedPrice = number_format($row["OfferedPrice"], 2);
+                } else {
+                    $formattedOfferedPrice = number_format($row["Price"], 2);
+                }
+            } else {
+                $formattedOfferedPrice = number_format($row["Price"], 2);
+            }
+            echo "<td>$formattedOfferedPrice</td>";
             echo "<td>";
             echo "<form action='cartFunctions.php' method='post'>";
             echo "<select name='quantity' onChange='this.form.submit()'>";
@@ -64,7 +76,7 @@ if (isset($_SESSION["Cart"])) {
             echo "<input type='hidden' name='product_id' value='$row[ProductID]' />";
             echo "</form>";
             echo "</td>";
-            $formattedTotal = number_format($row["Total"], 2);
+            $formattedTotal = number_format($formattedOfferedPrice * $row["Quantity"], 2);
             echo "<td>$formattedTotal</td>";
             echo "<td>"; // Column for remove item from shopping cart
             echo "<form action='cartFunctions.php' method='post'>";
@@ -84,7 +96,7 @@ if (isset($_SESSION["Cart"])) {
             );
 
             // Accumulate the running sub-total
-            $subTotal += $row["Total"];
+            $subTotal += $formattedTotal;
         }
         echo "</tbody>"; // End of table's body section
         echo "</table>"; // End of table
