@@ -104,14 +104,14 @@ include("header.php"); // Include the Page Layout header
            $qry .=" AND s.SpecID = 1 AND ps.SpecVal = '$occasionList'";
         }
         // Add conditions based on user input
-        if ($minPrice > 0) {
+        if ($minPrice > 0 && $minPrice != null) {
             //$qry .= " AND Price >=?";
             //the query is to let the search function check the offered price of the product that is on offer or the original price 
             //if the product is not on offer.
             $qry .= " AND (Offered = 1 AND NOW() BETWEEN OfferStartDate AND OfferEndDate AND OfferedPrice >= ? OR Price >= ?)";;
         }
 
-        if ($maxPrice < PHP_INT_MAX) {
+        if ($maxPrice < PHP_INT_MAX && $maxPrice != null) {
             //$qry .=" AND Price <=?";
             //the query is to let the search function check the offered price of the product that is on offer or the original price 
             //if the product is not on offer.
@@ -144,6 +144,7 @@ include("header.php"); // Include the Page Layout header
                 $productDescription = urldecode($row['ProductDesc']);
                 $originalPrice = urldecode(number_format($row['Price'],2));
                 $discountedPrice = urldecode(number_format($row['OfferedPrice'],2));
+                $img = "./Images/products/$row[ProductImage]";
                 //calculate percentage discount
                 $discountPercentage = round((($originalPrice-$discountedPrice)/$originalPrice)* 100);
                 $productDetails = "productDetails.php?pid=$row[ProductID]&ProductTitle=$productTitle";
@@ -153,6 +154,10 @@ include("header.php"); // Include the Page Layout header
               
                     // Display search results in a table
                     echo "<div class='row mb-3'>";
+                    echo "<div class='col-sm-4'>";
+                    // Display product image if available
+                    echo "<img src='$img' class='img-fluid' alt='Product Image'>";
+                    echo "</div>";
                     echo "<div class='col-sm-8'>";
                     echo "<p><a href=$productDetails>$row[ProductTitle]</a></p>";
                    // Display the original price

@@ -55,7 +55,7 @@ while ($row = $result->fetch_array()) {
 
     // Right column - display the product's image, price, and add to cart form
     $img = "./Images/products/$row[ProductImage]";
-    echo "<div class='col-sm-4 text-center' style='padding: 10px;'>";
+    echo "<div class='col-sm-3 text-center' style='padding: 10px;'>";
     echo "<img src='$img' class='img-fluid' alt='Product Image'>";
     
     //if product is on offer, show the original and discounted price
@@ -76,9 +76,9 @@ while ($row = $result->fetch_array()) {
         echo "<form action='cartFunctions.php' method='post'>";
         echo "<input type='hidden' name='action' value='add'/>";
         echo "<input type='hidden' name='product_id' value='$pid'/>";
-        echo "<div class='mb-3'>";
-        echo "<label for='quantity' class='form-label'>Quantity:</label>";
-        //The quantity input will be disabled
+        echo "<div class='input-group mb-3'>";
+        echo "<label for='quantity' class='input-group-text'>Quantity:</label>";
+        // the quantity input field will be disabled
         echo "<input type='number' name='quantity' class='form-control' value='1' min='1' max='10' disabled/>";
         echo "</div>";
         //The "Add to Cart" button will be disabled
@@ -95,8 +95,8 @@ while ($row = $result->fetch_array()) {
     echo "<form action='cartFunctions.php' method='post'>";
     echo "<input type='hidden' name='action' value='add'/>";
     echo "<input type='hidden' name='product_id' value='$pid'/>";
-    echo "<div class='mb-3'>";
-    echo "<label for='quantity' class='form-label'>Quantity:</label>";
+    echo "<div class='input-group mb-3'>";
+    echo "<label for='quantity' class='input-group-text'>Quantity:</label>";
     echo "<input type='number' name='quantity' class='form-control' value='1' min='1' max='10' required/>";
     echo "</div>";
     echo "<button type='submit' class='btn btn-primary'>Add to Cart</button>";
