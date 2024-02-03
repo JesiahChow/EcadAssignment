@@ -43,8 +43,7 @@ if($_POST) //Post Data received from Shopping cart page.
 	
 	// To Do 1A: Compute GST amount 7% for Singapore, round the figure to 2 decimal places
 	//$_SESSION["Tax"] = round($_SESSION["SubTotal"]*0.09, 2);
-
-	 // To retrieve GST from the gst based on today's date
+	// To retrieve GST from the gst based on today's date
 	$currentDate = date('Y-m-d');
     $stmt = $conn->prepare("SELECT TaxRate FROM GST WHERE EffectiveDate >= ? ORDER BY EffectiveDate ASC LIMIT 1");
     $stmt->bind_param("s", $currentDate);
