@@ -45,13 +45,13 @@ if($_POST) //Post Data received from Shopping cart page.
 	//$_SESSION["Tax"] = round($_SESSION["SubTotal"]*0.09, 2);
 	// To retrieve GST from the gst based on today's date
 	$currentDate = date('Y-m-d');
-    $stmt = $conn->prepare("SELECT TaxRate FROM GST WHERE EffectiveDate >= ? ORDER BY EffectiveDate ASC LIMIT 1");
+    $stmt = $conn->prepare("SELECT TaxRate FROM GST WHERE EffectiveDate <= ? ORDER BY EffectiveDate DESC LIMIT 1");
     $stmt->bind_param("s", $currentDate);
     $stmt->execute();
     $stmt->bind_result($gstPercentage);
     
     if ($stmt->fetch()) {
-        // GST found for the closest date after today
+        // GST found for the closest date 
         $_SESSION["Tax"] = round($_SESSION["SubTotal"] * ($gstPercentage / 100), 2);
     } else {
         // GST not found, handle accordingly
@@ -159,7 +159,16 @@ if(isset($_GET["token"]) && isset($_GET["PayerID"]))
 	{
 		// To Do 5 (DIY): Update stock inventory in product table 
 		//                after successful checkout
+		foreach ($_SESSION['Items'] as $key => $item) {
+			$productId = $item["productId"];
+			$quantityInCart = $item["quantity"];
 		
+			// Execute SQL statement to update the quantity in stock for the Product ID
+			$stmt = $conn->prepare("UPDATE Product SET Quantity = Quantity - ? WHERE ProductID = ?");
+			$stmt->bind_param("ii", $quantityInCart, $productId);
+			$stmt->execute();
+			$stmt->close();
+		}
 		// End of To Do 5
 	
 		// To Do 2: Update shopcart table, close the shopping cart (OrderPlaced=1)
@@ -219,6 +228,8 @@ if(isset($_GET["token"]) && isset($_GET["PayerID"]))
 			// "i" - integer, "s" - string
 			$stmt->bind_param("ssssi", $ShipName, $ShipAddress, $ShipCountry,
 								$ShipEmail, $_SESSION["Cart"]);
+
+			
 			$stmt->execute();
 			$stmt->close();
 			$qry = "SELECT LAST_INSERT_ID() AS OrderID";
