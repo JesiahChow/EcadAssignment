@@ -8,7 +8,27 @@ if($_POST) //Post Data received from Shopping cart page.
 {
 	// To Do 6 (DIY): Check to ensure each product item saved in the associative
 	//                array is not out of stock
-	
+	$items = $_SESSION['Items'];
+    
+    foreach ($items as $key => $item) {
+        $productId = $item["productId"];
+        $quantityInCart = $item["quantity"];
+
+        // Execute SQL statement to get the quantity in stock for the Product ID
+        $stmt = $conn->prepare("SELECT Quantity FROM Product WHERE ProductID = ?");
+        $stmt->bind_param("i", $productId);
+        $stmt->execute();
+        $stmt->bind_result($stock);
+        $stmt->fetch();
+        $stmt->close();
+
+        // Check if stock quantity is less than the quantity in the cart
+        if ($stock < $quantityInCart) {
+            // Display "out of stock" message
+            echo "Sorry, the product with ID $productId is out of stock. Please review your cart.";
+            exit; // Stop the checkout process
+        }
+    }
 	// End of To Do 6
 	
 	$paypal_data = '';
@@ -22,7 +42,25 @@ if($_POST) //Post Data received from Shopping cart page.
 	}
 	
 	// To Do 1A: Compute GST amount 7% for Singapore, round the figure to 2 decimal places
-	$_SESSION["Tax"] = round($_SESSION["SubTotal"]*0.09, 2);
+	//$_SESSION["Tax"] = round($_SESSION["SubTotal"]*0.09, 2);
+
+	 // To retrieve GST from the gst based on today's date
+	$currentDate = date('Y-m-d');
+    $stmt = $conn->prepare("SELECT TaxRate FROM GST WHERE EffectiveDate >= ? ORDER BY EffectiveDate ASC LIMIT 1");
+    $stmt->bind_param("s", $currentDate);
+    $stmt->execute();
+    $stmt->bind_result($gstPercentage);
+    
+    if ($stmt->fetch()) {
+        // GST found for the closest date after today
+        $_SESSION["Tax"] = round($_SESSION["SubTotal"] * ($gstPercentage / 100), 2);
+    } else {
+        // GST not found, handle accordingly
+        echo "GST information not available.";
+        exit;
+    }
+
+    $stmt->close();
 	
 	// To Do 1B: Compute Shipping charge - S$2.00 per trip
 	//$_SESSION["ShipCharge"] = 2.00;
