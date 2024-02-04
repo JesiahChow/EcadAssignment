@@ -5,8 +5,6 @@ session_start();
 // Include the Page Layout header
 include("header.php"); 
 ?>
-<!--image  for slider source-->
-<!--https://giftr.sg/-->
 <h2 style="text-align: center;">Welcome to Oxy Gift Shop. Your Number 1 Trusted Gift Shop</h2>
 
 <!--Image slideshow using bootstrap-->
