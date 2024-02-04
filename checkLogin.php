@@ -10,7 +10,7 @@ $pwd = $_POST["password"];
 //Validate login credentials with database
 include_once("mysql_conn.php");
 //sql query to select email,name and password
-$sql = "SELECT ShopperID,Email,Password,Name FROM Shopper WHERE Email ='$email'  ";
+$sql = "SELECT ShopperID,Email,Password,Name, Address, Phone FROM Shopper WHERE Email ='$email'  ";
 $result = $conn->query($sql);
 //fetch the values from database
 if ($result->num_rows > 0) {
@@ -20,6 +20,9 @@ if ($result->num_rows > 0) {
         //if record is found and password is matched
         $_SESSION["ShopperID"] = $row["ShopperID"];
         $_SESSION["ShopperName"] = $row["Name"];
+        $_SESSION["ShopperAddress"] = $row["Address"];
+        $_SESSION["ShopperPhone"] = $row["Phone"];
+        $_SESSION["ShopperEmail"] = $row["Email"];
         //for shopping cart
         $shopperID = $_SESSION["ShopperID"];
         $qry = "SELECT ShopCartID FROM ShopCart WHERE ShopperID=? AND OrderPlaced=0";

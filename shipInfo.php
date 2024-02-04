@@ -6,7 +6,14 @@ echo "<p style='text-align:right; font-size:20px'>";
 
 $options = array("Normal Delivery", "Express Delivery");
 
-echo "Delivery Method: <input type='text' name='shipMethod' value='Normal Delivery'><br />";
+echo "Delivery Method: ";
+
+foreach ($options as $option) {
+    $checked = ($option == 'Normal Delivery') ? 'checked' : ''; // Set default value as 'Normal Delivery'
+    echo "<input type='radio' name='shipMethod' value='$option' $checked> $option ";
+}
+
+echo "<br />";
 echo "</p>";
 echo "<input type='image' style='float:right;'
 						src='https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif'>";

@@ -9,27 +9,27 @@ if($_POST) //Post Data received from Shopping cart page.
 	// To Do 6 (DIY): Check to ensure each product item saved in the associative
 	//                array is not out of stock
 	$items = $_SESSION['Items'];
-    
-    foreach ($items as $key => $item) {
-        $productId = $item["productId"];
-        $quantityInCart = $item["quantity"];
+		
+	foreach ($items as $key => $item) {
+		$productId = $item["productId"];
+		$quantityInCart = $item["quantity"];
 
-        // Execute SQL statement to get the quantity in stock for the Product ID
-        $stmt = $conn->prepare("SELECT Quantity FROM Product WHERE ProductID = ?");
-        $stmt->bind_param("i", $productId);
-        $stmt->execute();
-        $stmt->bind_result($stock);
-        $stmt->fetch();
-        $stmt->close();
+		// Execute SQL statement to get the quantity in stock for the Product ID
+		$stmt = $conn->prepare("SELECT Quantity FROM Product WHERE ProductID = ?");
+		$stmt->bind_param("i", $productId);
+		$stmt->execute();
+		$stmt->bind_result($stock);
+		$stmt->fetch();
+		$stmt->close();
 
-        // Check if stock quantity is less than the quantity in the cart
-        if ($stock < $quantityInCart) {
-            // Display "out of stock" message
-            echo "Sorry, the product with ID $productId is out of stock. Please review your cart.";
-            exit; // Stop the checkout process
-        }
-    }
-	// End of To Do 6
+		// Check if stock quantity is less than the quantity in the cart
+		if ($stock < $quantityInCart) {
+			// Display "out of stock" message
+			echo "Sorry, the product with ID $productId is out of stock. Please review your cart.";
+			exit; // Stop the checkout process
+		}
+	}
+// End of To Do 6
 	
 	$paypal_data = '';
 	// Get all items from the shopping cart, concatenate to the variable $paypal_data
@@ -42,17 +42,14 @@ if($_POST) //Post Data received from Shopping cart page.
 	}
 	
 	// To Do 1A: Compute GST amount 7% for Singapore, round the figure to 2 decimal places
-	//$_SESSION["Tax"] = round($_SESSION["SubTotal"]*0.09, 2);
-	// To retrieve GST from the gst based on today's date
-	$currentDate = date('Y-m-d');
-    $stmt = $conn->prepare("SELECT TaxRate FROM GST WHERE EffectiveDate <= ? ORDER BY EffectiveDate DESC LIMIT 1");
-    $stmt->bind_param("s", $currentDate);
+$currentDate = date('Y-m-d');
+$stmt = $conn->prepare("SELECT TaxRate FROM GST WHERE EffectiveDate <= ? ORDER BY EffectiveDate DESC LIMIT 1");
+$stmt->bind_param("s", $currentDate);
     $stmt->execute();
     $stmt->bind_result($gstPercentage);
     
     if ($stmt->fetch()) {
-        // GST found for the closest date 
-        $_SESSION["Tax"] = round($_SESSION["SubTotal"] * ($gstPercentage / 100), 2);
+  		$_SESSION["Tax"] = round($_SESSION["SubTotal"] * ($gstPercentage / 100), 2);
     } else {
         // GST not found, handle accordingly
         echo "GST information not available.";
@@ -60,15 +57,20 @@ if($_POST) //Post Data received from Shopping cart page.
     }
 
     $stmt->close();
-	
-	// To Do 1B: Compute Shipping charge - S$2.00 per trip
+// To Do 1B: Compute Shipping charge - S$2.00 per trip
 	//$_SESSION["ShipCharge"] = 2.00;
 	
 	$shipMethod = $_POST["shipMethod"];
 	if ($shipMethod == "Normal Delivery")
+	{
+		$_SESSION["ShipType"] = "Normal";
 		$_SESSION["ShipCharge"] = 5.00;
+	}
 	else if ($shipMethod == "Express Delivery")
+	{
+		$_SESSION["ShipType"] = "Express";
 		$_SESSION["ShipCharge"] = 10.00;
+	}
 	else
 		$_SESSION["ShipCharge"] = 0.00;
 	
@@ -162,7 +164,6 @@ if(isset($_GET["token"]) && isset($_GET["PayerID"]))
 		foreach ($_SESSION['Items'] as $key => $item) {
 			$productId = $item["productId"];
 			$quantityInCart = $item["quantity"];
-		
 			// Execute SQL statement to update the quantity in stock for the Product ID
 			$stmt = $conn->prepare("UPDATE Product SET Quantity = Quantity - ? WHERE ProductID = ?");
 			$stmt->bind_param("ii", $quantityInCart, $productId);
@@ -221,15 +222,44 @@ if(isset($_GET["token"]) && isset($_GET["PayerID"]))
 			
 			// To Do 3: Insert an Order record with shipping information
 			//          Get the Order ID and save it in session variable.
-			$qry = "INSERT INTO orderdata (ShipName, ShipAddress, ShipCountry, 
-											ShipEmail, ShopCartID)
-					 VALUES (?, ?, ?, ?, ?)";
-			$stmt = $conn->prepare($qry);
-			// "i" - integer, "s" - string
-			$stmt->bind_param("ssssi", $ShipName, $ShipAddress, $ShipCountry,
-								$ShipEmail, $_SESSION["Cart"]);
 
-			
+			$BillName = $_SESSION["ShopperName"];
+			$BillPhone = $_SESSION["ShopperPhone"];
+			$BillEmail = $_SESSION["ShopperEmail"];
+			$BillAddress = $_SESSION["ShopperAddress"];
+
+			$todayDate = date("Y-m-d");
+			$DeliveryTime = date("H:i:s");
+			if ($_SESSION["ShipType"] == "Normal")
+			{
+				$DeliveryMode = $_SESSION["ShipType"];
+				$DeliveryDate = date("Y-m-d", strtotime($todayDate . " +2 days"));
+			}
+			else if ($_SESSION["ShipType"] == "Express")
+			{
+				$DeliveryMode = $_SESSION["ShipType"];
+				$DeliveryDate = date("Y-m-d", strtotime($todayDate . " +1 day"));
+			}
+
+			$qry = "INSERT INTO orderdata (ShipName, ShipAddress, ShipCountry, 
+			ShipEmail, BillName, BillAddress, BillPhone, BillEmail, DeliveryDate, DeliveryTime,
+			DeliveryMode, ShopCartID)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+			$stmt = $conn->prepare($qry);
+			$stmt->bind_param("sssssssssssi", $ShipName, $ShipAddress, $ShipCountry,
+			$ShipEmail, $BillName, $BillAddress, $BillPhone,
+			$BillEmail, $DeliveryDate, $DeliveryTime,
+			$DeliveryMode, $_SESSION["Cart"]);
+
+
+			// $qry = "INSERT INTO orderdata (ShipName, ShipAddress, ShipCountry, 
+			// 								ShipEmail, ShopCartID)
+			// 		 VALUES (?, ?, ?, ?, ?)";
+			// $stmt = $conn->prepare($qry);
+			// // "i" - integer, "s" - string
+			// $stmt->bind_param("ssssi", $ShipName, $ShipAddress, $ShipCountry,
+			// 					$ShipEmail, $_SESSION["Cart"]);
 			$stmt->execute();
 			$stmt->close();
 			$qry = "SELECT LAST_INSERT_ID() AS OrderID";
