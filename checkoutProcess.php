@@ -34,11 +34,41 @@ if ($_POST) //Post Data received from Shopping cart page.
 	$paypal_data = '';
 	// Get all items from the shopping cart, concatenate to the variable $paypal_data
 	// $_SESSION['Items'] is an associative array
+
+	// foreach ($_SESSION['Items'] as $key => $item) {
+	// 	$paypal_data .= '&L_PAYMENTREQUEST_0_QTY' . $key . '=' . urlencode($item["quantity"]);
+	// 	$paypal_data .= '&L_PAYMENTREQUEST_0_AMT' . $key . '=' . urlencode($item["price"]);
+	// 	$paypal_data .= '&L_PAYMENTREQUEST_0_NAME' . $key . '=' . urlencode($item["name"]);
+	// 	$paypal_data .= '&L_PAYMENTREQUEST_0_NUMBER' . $key . '=' . urlencode($item["productId"]);
+	// }
+
 	foreach ($_SESSION['Items'] as $key => $item) {
+
+		$stmt = $conn->prepare("SELECT Price, OfferedPrice, OfferStartDate, OfferEndDate FROM Product WHERE ProductID = ? ");
+		$stmt->bind_param("i", $item["productId"]);
+		$stmt->execute();
+		$stmt->bind_result($price, $offeredPrice, $offerStartDate, $offerEndDate);
+		$stmt->fetch();
+		$today = new DateTime(); // current date and time
+		$offerStartDate = new DateTime($offerStartDate);
+		$offerEndDate = new DateTime($offerEndDate);
+		$today->setTime(0, 0, 0);
+		$offerStartDate->setTime(0, 0, 0);
+		$offerEndDate->setTime(0, 0, 0);
+		if ($today >= $offerStartDate && $today <= $offerEndDate) {
+			// Today is between the offer start date and end date, use the offered price
+			$finalPrice = $offeredPrice;
+		} else {
+			// Today is not between the offer start date and end date, use the regular price
+			$finalPrice = $price;
+		}
+
 		$paypal_data .= '&L_PAYMENTREQUEST_0_QTY' . $key . '=' . urlencode($item["quantity"]);
-		$paypal_data .= '&L_PAYMENTREQUEST_0_AMT' . $key . '=' . urlencode($item["price"]);
+		$paypal_data .= '&L_PAYMENTREQUEST_0_AMT' . $key . '=' . urlencode($finalPrice);
 		$paypal_data .= '&L_PAYMENTREQUEST_0_NAME' . $key . '=' . urlencode($item["name"]);
 		$paypal_data .= '&L_PAYMENTREQUEST_0_NUMBER' . $key . '=' . urlencode($item["productId"]);
+	
+		$stmt->close();
 	}
 
 	// To Do 1A: Compute GST amount 7% for Singapore, round the figure to 2 decimal places
@@ -139,7 +169,7 @@ if (isset($_GET["token"]) && isset($_GET["PayerID"])) {
 	// $_SESSION['Items'] is an associative array
 	foreach ($_SESSION['Items'] as $key => $item) {
 		$paypal_data .= '&L_PAYMENTREQUEST_0_QTY' . $key . '=' . urlencode($item["quantity"]);
-		$paypal_data .= '&L_PAYMENTREQUEST_0_AMT' . $key . '=' . urlencode($item["price"]);
+		$paypal_data .= '&L_PAYMENTREQUEST_0_AMT' . $key . '=' . urlencode($finalPrice);
 		$paypal_data .= '&L_PAYMENTREQUEST_0_NAME' . $key . '=' . urlencode($item["name"]);
 		$paypal_data .= '&L_PAYMENTREQUEST_0_NUMBER' . $key . '=' . urlencode($item["productId"]);
 	}
