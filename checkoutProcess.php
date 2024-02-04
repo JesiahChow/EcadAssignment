@@ -6,7 +6,7 @@ include_once("mysql_conn.php");
 
 if ($_POST) //Post Data received from Shopping cart page.
 {
-	// To Do 6 (DIY): Check to ensure each product item saved in the associative
+	// Check to ensure each product item saved in the associative
 	//                array is not out of stock
 	$items = $_SESSION['Items'];
 
@@ -29,7 +29,7 @@ if ($_POST) //Post Data received from Shopping cart page.
 			exit; // Stop the checkout process
 		}
 	}
-	// End of To Do 6
+
 
 	$paypal_data = '';
 	// Get all items from the shopping cart, concatenate to the variable $paypal_data
@@ -71,7 +71,7 @@ if ($_POST) //Post Data received from Shopping cart page.
 		$stmt->close();
 	}
 
-	// To Do 1A: Compute GST amount 7% for Singapore, round the figure to 2 decimal places
+	//Compute GST amount 7% for Singapore, round the figure to 2 decimal places
 	$currentDate = date('Y-m-d');
 	$stmt = $conn->prepare("SELECT TaxRate FROM GST WHERE EffectiveDate <= ? ORDER BY EffectiveDate DESC LIMIT 1");
 	$stmt->bind_param("s", $currentDate);
@@ -87,7 +87,7 @@ if ($_POST) //Post Data received from Shopping cart page.
 	}
 
 	$stmt->close();
-	// To Do 1B: Compute Shipping charge - S$2.00 per trip
+	//Compute Shipping charge - S$2.00 per trip
 	//$_SESSION["ShipCharge"] = 2.00;
 
 	$shipMethod = $_POST["shipMethod"];
@@ -214,9 +214,9 @@ if (isset($_GET["token"]) && isset($_GET["PayerID"])) {
 			$stmt->execute();
 			$stmt->close();
 		}
-		// End of To Do 5
+		
 
-		// To Do 2: Update shopcart table, close the shopping cart (OrderPlaced=1)
+		//Update shopcart table, close the shopping cart (OrderPlaced=1)
 		$total = $_SESSION["SubTotal"] + $_SESSION["Tax"] + $_SESSION["ShipCharge"];
 		$qry = "UPDATE shopcart SET OrderPlaced=1, Quantity=?,
 				SubTotal=?, ShipCharge=?, Tax=?, Total=?
@@ -234,7 +234,7 @@ if (isset($_GET["token"]) && isset($_GET["PayerID"])) {
 		);
 		$stmt->execute();
 		$stmt->close();
-		// End of To Do 2
+		
 
 		//We need to execute the "GetTransactionDetails" API Call at this point 
 		//to get customer details
@@ -277,8 +277,8 @@ if (isset($_GET["token"]) && isset($_GET["PayerID"])) {
 
 			$ShipEmail = urldecode($httpParsedResponseAr["EMAIL"]);
 
-			// To Do 3: Insert an Order record with shipping information
-			//          Get the Order ID and save it in session variable.
+			// Insert an Order record with shipping information
+			// Get the Order ID and save it in session variable.
 
 			$BillName = $_SESSION["ShopperName"];
 			$BillPhone = $_SESSION["ShopperPhone"];
@@ -347,13 +347,13 @@ if (isset($_GET["token"]) && isset($_GET["PayerID"])) {
 
 			$conn->close();
 
-			// To Do 4A: Reset the "Number of Items in Cart" session variable to zero.
+			//Reset the "Number of Items in Cart" session variable to zero.
 			$_SESSION["NumCartItem"] = 0;
 
-			// To Do 4B: Clear the session variable that contains Shopping Cart ID.
+			//Clear the session variable that contains Shopping Cart ID.
 			unset($_SESSION["Cart"]);
 
-			// To Do 4C: Redirect shopper to the order confirmed page.
+			//Redirect shopper to the order confirmed page.
 			header("Location: orderConfirmed.php");
 			exit;
 		} else {

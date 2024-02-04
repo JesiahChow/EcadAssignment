@@ -105,14 +105,12 @@ include("header.php"); // Include the Page Layout header
         }
         // Add conditions based on user input
         if ($minPrice > 0 && $minPrice != null) {
-            //$qry .= " AND Price >=?";
             //the query is to let the search function check the offered price of the product that is on offer or the original price 
             //if the product is not on offer.
             $qry .= " AND (Offered = 1 AND NOW() BETWEEN OfferStartDate AND OfferEndDate AND OfferedPrice >= ? OR Price >= ?)";;
         }
 
         if ($maxPrice < PHP_INT_MAX && $maxPrice != null) {
-            //$qry .=" AND Price <=?";
             //the query is to let the search function check the offered price of the product that is on offer or the original price 
             //if the product is not on offer.
             $qry .= " AND (Offered = 1 AND NOW() BETWEEN OfferStartDate AND OfferEndDate AND OfferedPrice <= ? OR Price <= ?)";
