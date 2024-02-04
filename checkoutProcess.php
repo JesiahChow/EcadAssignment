@@ -230,29 +230,40 @@ if(isset($_GET["token"]) && isset($_GET["PayerID"]))
 
 			$todayDate = date("Y-m-d");
 			$DeliveryTime = date("H:i:s");
+			$BillCountry = "Singapore";
 			if ($_SESSION["ShipType"] == "Normal")
 			{
 				$DeliveryMode = $_SESSION["ShipType"];
 				$DeliveryDate = date("Y-m-d", strtotime($todayDate . " +2 days"));
+				$_SESSION["DeliveryDate"] = $DeliveryDate;
 			}
 			else if ($_SESSION["ShipType"] == "Express")
 			{
 				$DeliveryMode = $_SESSION["ShipType"];
 				$DeliveryDate = date("Y-m-d", strtotime($todayDate . " +1 day"));
+				$_SESSION["DeliveryDate"] = $DeliveryDate;
 			}
 
 			$qry = "INSERT INTO orderdata (ShipName, ShipAddress, ShipCountry, 
-			ShipEmail, BillName, BillAddress, BillPhone, BillEmail, DeliveryDate, DeliveryTime,
+			ShipEmail, BillName, BillAddress, BillCountry, BillPhone, BillEmail, DeliveryDate, DeliveryTime,
 			DeliveryMode, ShopCartID)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 			$stmt = $conn->prepare($qry);
-			$stmt->bind_param("sssssssssssi", $ShipName, $ShipAddress, $ShipCountry,
-			$ShipEmail, $BillName, $BillAddress, $BillPhone,
+			$stmt->bind_param("ssssssssssssi", $ShipName, $ShipAddress, $ShipCountry,
+			$ShipEmail, $BillName, $BillAddress, $BillCountry, $BillPhone,
 			$BillEmail, $DeliveryDate, $DeliveryTime,
 			$DeliveryMode, $_SESSION["Cart"]);
 
-
+			$_SESSION["OrderDetails"] = array(
+				"OrderID" => $_SESSION["OrderID"],
+				"ShipName" => $ShipName,
+				"ShipAddress" => $ShipAddress,
+				"ShipCountry" => $ShipCountry,
+				"ShipType" => $_SESSION["ShipType"],
+				"DeliveryDate" => $_SESSION["DeliveryDate"],
+				"ItemsOrdered" => $_SESSION['Items'], 
+			);
 			// $qry = "INSERT INTO orderdata (ShipName, ShipAddress, ShipCountry, 
 			// 								ShipEmail, ShopCartID)
 			// 		 VALUES (?, ?, ?, ?, ?)";
@@ -267,7 +278,7 @@ if(isset($_GET["token"]) && isset($_GET["PayerID"]))
 			$row = $result->fetch_array();
 			$_SESSION["OrderID"] = $row["OrderID"];
 			// End of To Do 3
-				
+
 			$conn->close();
 				  
 			// To Do 4A: Reset the "Number of Items in Cart" session variable to zero.

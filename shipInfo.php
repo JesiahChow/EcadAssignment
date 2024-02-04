@@ -4,16 +4,16 @@
 echo "<form method='post' action=' checkoutProcess.php'>";
 echo "<p style='text-align:right; font-size:20px'>";
 
-$options = array("Normal Delivery", "Express Delivery");
+$options = array("Normal Delivery" => 5, "Express Delivery" => 10);
 
-echo "Delivery Method: ";
+echo "Delivery Method: <select name='shipMethod'>";
 
-foreach ($options as $option) {
-    $checked = ($option == 'Normal Delivery') ? 'checked' : ''; // Set default value as 'Normal Delivery'
-    echo "<input type='radio' name='shipMethod' value='$option' $checked> $option ";
+foreach ($options as $option => $cost) {
+    $selected = ($option == 'Normal Delivery') ? 'selected' : ''; // Set default value as 'Normal Delivery'
+    echo "<option value='$option' $selected>$option ($$cost)</option>";
 }
 
-echo "<br />";
+echo "</select><br />";
 echo "</p>";
 echo "<input type='image' style='float:right;'
 						src='https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif'>";
